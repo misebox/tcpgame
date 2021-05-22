@@ -30,3 +30,22 @@ cli
 - 
 - 相手の名前を取得
 - ゲーム開始
+
+
+
+メッセージの種類
+- register
+- create_game
+- list_game
+- join_game
+- start_game
+- action
+- result
+- score
+
+メッセージ
+- from
+- to
+- kind
+- params(dict)
+- timestamp
