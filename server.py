@@ -1,7 +1,11 @@
 import socket
+import yaml
+
+with open('config.yml') as f:
+    config = yaml.safe_load(f)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((socket.gethostname(), 11111))  # IPとポート番号を指定します
+s.bind((socket.gethostname(), int(config['server_port'])))  # IPとポート番号を指定します
 s.listen(5)
 
 while True:

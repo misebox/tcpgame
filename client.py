@@ -1,9 +1,10 @@
 import socket
 import yaml
 
-s = open('config.yml').read()
-config = yaml.safe_load(s)
+with open('config.yml') as f:
+    config = yaml.safe_load(f)
 
+print(config)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((config['server_name'], config['server_port']))
@@ -18,8 +19,9 @@ while True:
 
 print(full_msg.decode("utf-8"))
 
-s.send(bytes("My name is " + config['user_name'], 'utf-8'))
+s.send(bytes(f"{config['greeting']} My name is {config['user_name']}", 'utf-8'))
 
+full_msg = b''
 while True:
     msg = s.recv(2)
     if len(msg) == 0:
