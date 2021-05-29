@@ -1,24 +1,26 @@
 import socket
 import yaml
+import common
+import time
 
 with open('config.yml') as f:
     config = yaml.safe_load(f)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((socket.gethostname(), int(config['server_port'])))  # IPとポート番号を指定します
-s.listen(5)
+try:
+    server_soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_soc.bind((config['server_name'], int(config['server_port'])))
+    # TIME_WAIT状態にあるローカルソケットをタイムアウトを待たずに再利用する
 
-while True:
-    clientsocket, address = s.accept()
-    print(f"Connection from {address} has been established!")
-    clientsocket.send(bytes("Welcome to the server!", 'utf-8'))
+    server_soc.listen(5)
 
-    full_msg = b''
     while True:
-        msg = clientsocket.recv(8)
-        if len(msg) <= 0:
-            break
-        full_msg += msg
-    print(full_msg)
+        client_socket, address = server_soc.accept()
+        print(f"Connection from {address} has been established!")
+        body = bytes("Welcome to the server!", 'utf-8')
+        common.send_message(client_socket, body)
 
-    clientsocket.close()
+        client_socket.close()
+
+finally:
+    server_soc.close()

@@ -1,30 +1,22 @@
 import socket
 import yaml
+import time
 
-with open('config.yml') as f:
-    config = yaml.safe_load(f)
+import common
 
-print(config)
+def main():
+    with open('config.yml') as f:
+        config = yaml.safe_load(f)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((config['server_name'], config['server_port']))
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    soc.connect((config['remote_name'], config['server_port']))
 
-full_msg = b''
-while True:
-    msg = s.recv(2)
-    if len(msg) == 0:
-        break
-    full_msg += msg
+    body_size = common.recv_body_size(soc)
+    print(body_size)
+    body = common.recv_bytes(soc, body_size)
+    print(body)
+    soc.close()
 
-print(full_msg.decode("utf-8"))
-
-s.send(bytes(f"{config['greeting']} My name is {config['user_name']}", 'utf-8'))
-
-full_msg = b''
-while True:
-    msg = s.recv(2)
-    if len(msg) == 0:
-        break
-    full_msg += msg
-print(full_msg.decode("utf-8"))
+if __name__ == '__main__':
+    main()
