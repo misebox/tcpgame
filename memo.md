@@ -26,6 +26,7 @@ server
 
 cli
 - 設定ファイルで自分の名前と接続先を指定
+- 自分のソケット情報（IP, port）を貰う
 - 接続先へ自分の名前をsend
 - 
 - 相手の名前を取得
@@ -34,6 +35,8 @@ cli
 
 
 メッセージの種類
+- greeting(from client)
+- welcome
 - register
 - create_game
 - list_game
@@ -44,8 +47,7 @@ cli
 - score
 
 メッセージ
-- from
-- to
+- sender
 - kind
 - params(dict)
 - timestamp

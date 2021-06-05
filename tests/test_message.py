@@ -1,21 +1,22 @@
 import unittest
 
-import client
-import server
+from message import AppMessage, MessageKind
+from message import AppJSONEncoder
 
 
-class TestMessage(unittest.TestCase):
-    """test class of keisan.py
-    """
 
-    def test_tashizan(self):
-        """test method for tashizan
-        """
-        value1 = 2
-        value2 = 6
-        expected = 8
-        actual = keisan.tashizan(value1, value2)
-        self.assertEqual(expected, actual)
+class TestAppMessage(unittest.TestCase):
+
+    def test_greeting_to_json(self):
+        greet = AppMessage(sender=None, kind=MessageKind.GREETING, params={})
+        expected = '{"klass": "Message", "sender": null, "kind": "GREETING", "params": {}}'
+        self.assertEqual(greet.to_json(), expected, "シリアライズ結果がおかしい")
+
+    def test_welcome_to_json(self):
+        welcome = AppMessage(sender=("127.0.0.1", 40000), kind=MessageKind.WELCOME, params=dict(body="HELLO"))
+        expected = '{"klass": "Message", "sender": ["127.0.0.1", 40000], "kind": "WELCOME", "params": {"body": "HELLO"}}'
+        self.assertEqual(welcome.to_json(), expected, "シリアライズ結果がおかしい")
+
 
 
 

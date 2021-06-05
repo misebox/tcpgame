@@ -19,7 +19,6 @@ def recv_bytes(soc: socket.socket, req_size):
 
 def recv_body_size(soc: socket.socket):
     header_bytes = recv_bytes(soc, HEADER_SIZE)
-    print(header_bytes)
     return bytes_to_int(header_bytes)
 
 def bytes_to_int(_bytes):
@@ -34,6 +33,6 @@ def send_message(soc, body):
     header_bytes = int_to_bytes(body_size, 4)
     message = header_bytes + body
     res = soc.send(bytearray(header_bytes))
-    print(res)
+    # print(res)
     soc.send(body)
 
