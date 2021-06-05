@@ -21,7 +21,7 @@ try:
         print(f"Connection from {address} has been established!")
         # Welcome
         body = "Welcome to the server!"
-        msg = AppMessage(kind=MessageKind.WELCOME, sender=sender, params=dict(body=body, client_address=address))
+        msg = AppMessage.create_welcome(sender, body, address)
         common.send_message(client_socket, msg)
 
         client_socket.close()

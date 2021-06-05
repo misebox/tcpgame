@@ -1,6 +1,5 @@
-import json
 import socket
-from message import AppMessage, decodeAppMessage
+from message import AppMessage
 
 
 HEADER_SIZE = 4
@@ -23,7 +22,7 @@ def recv_body_size(soc: socket.socket):
 def recv_message(soc):
     body_size = recv_body_size(soc)
     body = recv_bytes(soc, body_size)
-    msg = json.loads(body, object_hook=decodeAppMessage)
+    msg = AppMessage.restore_message(body)
     print('received message: ', msg.to_json())
     return msg
 
