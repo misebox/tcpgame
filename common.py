@@ -7,8 +7,9 @@ HEADER_SIZE = 4
 def recv_bytes(soc: socket.socket, req_size):
     buf = bytearray()
     cnt = 0
+    received = 0
     while len(buf) < req_size:
-        received = soc.recv(4096)
+        received = soc.recv(req_size - received)
         if len(received) == 0 and cnt >= 10:
             raise Exception('received 0 for 10 times')
         buf.extend(received)
@@ -35,13 +36,21 @@ def int_to_bytes(num, byte_count):
 
 def send_bytes(soc, body):
     body_size = len(body)
-    print(f'sent {body_size} bytes: {body}')
     header_bytes = int_to_bytes(body_size, 4)
-    message = header_bytes + body
-    res = soc.send(bytearray(header_bytes))
-    print(res)
-    soc.send(body)
+    message = bytearray(header_bytes + body)
+    message_length = len(message)
+    # res = soc.send(bytearray(header_bytes))
+    # soc.send(body)
+    # res = soc.send(bytearray(header_bytes))
+
+    totalsent = 0
+    while totalsent < message_length:
+        sent = soc.send(message[totalsent:])
+        if sent == 0:
+            raise RuntimeError("socket connection broken")
+        totalsent = totalsent + sent
 
 
 def send_message(soc, msg: AppMessage):
+    print('sent message;', msg.to_json())
     send_bytes(soc, msg.to_bytes())

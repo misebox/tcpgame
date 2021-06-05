@@ -35,10 +35,14 @@ cli
 
 
 メッセージの種類
+- OK
+- ERROR
 - welcome
 - register
 - create_game
+- res_create_game
 - list_game
+- res_list_game
 - join_game
 - start_game
 - action
@@ -51,5 +55,17 @@ cli
 - params(dict)
 - timestamp
 
+メッセージプロトコル
+- client: (connect) --> server: welcome --> client: register
+
+cli:connect: [Welcome, register, OK]
+cli:create_game: [OK]
+srv:start_game: [Game, OK]
 
 課題
+
+2021.6.5
+
+メッセージクラスを作った。
+
+

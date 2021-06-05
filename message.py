@@ -4,7 +4,8 @@ import time
 from datetime import datetime, timedelta, timezone
 
 class MessageKind(enum.Enum):
-    GREETING    = enum.auto()
+    OK          = enum.auto()
+    ERROR       = enum.auto()
     WELCOME     = enum.auto()
     REGISTER    = enum.auto()
     CREATE_GAME = enum.auto()
@@ -27,6 +28,19 @@ class AppMessage:
         self.timestamp = None
 
     @classmethod
+    def create_message(cls, sender, kind, params=None):
+        msg = AppMessage()
+        msg.sender = sender
+        msg.kind = kind
+        msg.params = params or {}
+        msg.timestamp = datetime.now(JST)
+        return msg
+
+    @classmethod
+    def create_ok(cls, sender):
+        return cls.create_message(sender, MessageKind.OK)
+
+    @classmethod
     def create_welcome(cls, sender, body, client_address):
         params = dict(
             body=body,
@@ -35,13 +49,11 @@ class AppMessage:
         return cls.create_message(sender, MessageKind.WELCOME, params)
 
     @classmethod
-    def create_message(cls, sender, kind, params):
-        msg = AppMessage()
-        msg.sender = sender
-        msg.kind = kind
-        msg.params = params
-        msg.timestamp = datetime.now(JST)
-        return msg
+    def create_register(cls, sender, name):
+        params = dict(
+            name=name,
+        )
+        return cls.create_message(sender, MessageKind.REGISTER, params)
 
     @classmethod
     def from_dict(cls, _dict):

@@ -16,12 +16,28 @@ try:
 
     server_soc.listen(5)
 
+    clients = {}
     while True:
         client_socket, address = server_soc.accept()
         print(f"Connection from {address} has been established!")
+
         # Welcome
         body = "Welcome to the server!"
         msg = AppMessage.create_welcome(sender, body, address)
+        common.send_message(client_socket, msg)
+
+        # recv REGISTER
+        msg = common.recv_message(client_socket)
+        assert msg.kind == MessageKind.REGISTER
+        user_name = msg.params['name']
+        clients[address] = clients.get(address) or {}
+        client = clients[address]
+        client['name'] = user_name
+        for addr, d in clients.items():
+            print(addr, d)
+
+        # send OK
+        msg = AppMessage.create_ok(sender)
         common.send_message(client_socket, msg)
 
         client_socket.close()
