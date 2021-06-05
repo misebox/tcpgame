@@ -27,6 +27,9 @@ class AppMessage:
         json_str = json.dumps(self, cls=AppJSONEncoder)
         return json_str
 
+    def to_bytes(self):
+        return bytes(self.to_json(), encoding='ascii')
+
 
 class AppJSONEncoder(json.JSONEncoder):
     def default(self, o):
@@ -41,3 +44,13 @@ class AppJSONEncoder(json.JSONEncoder):
             return o.name
         else:
             return super(AppJSONEncoder, self).default(o)
+
+def decodeAppMessage(obj):
+    if obj.get('klass') == 'Message':
+        kind=MessageKind[obj['kind']]
+        sender = tuple(obj['sender'])
+        params = obj['params']
+        return AppMessage(kind=kind, sender=sender, params=params)
+    else:
+        return obj
+

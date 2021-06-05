@@ -1,8 +1,8 @@
 import socket
 import yaml
-import time
 
 import common
+
 
 def main():
     with open('config.yml') as f:
@@ -13,9 +13,7 @@ def main():
     sender = (config['remote_name'], config['server_port'])
     soc.connect(sender)
 
-    body_size = common.recv_body_size(soc)
-    body = common.recv_bytes(soc, body_size)
-    print(body)
+    msg = common.recv_message(soc)
     soc.close()
 
 if __name__ == '__main__':

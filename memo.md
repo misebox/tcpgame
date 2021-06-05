@@ -35,7 +35,6 @@ cli
 
 
 メッセージの種類
-- greeting(from client)
 - welcome
 - register
 - create_game

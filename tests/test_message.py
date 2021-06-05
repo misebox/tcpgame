@@ -1,7 +1,9 @@
 import unittest
+import json
 
 from message import AppMessage, MessageKind
 from message import AppJSONEncoder
+from message import decodeAppMessage
 
 
 
@@ -17,6 +19,14 @@ class TestAppMessage(unittest.TestCase):
         expected = '{"klass": "Message", "sender": ["127.0.0.1", 40000], "kind": "WELCOME", "params": {"body": "HELLO"}}'
         self.assertEqual(welcome.to_json(), expected, "シリアライズ結果がおかしい")
 
+    def test_decode_welcome(self):
+        welcome_json = '{"klass": "Message", "sender": ["127.0.0.1", 40000], "kind": "WELCOME", "params": {"body": "HELLO"}}'
+        msg = json.loads(welcome_json, object_hook=decodeAppMessage)
+        expected = AppMessage(sender=("127.0.0.1", 40000), kind=MessageKind.WELCOME, params=dict(body="HELLO"))
+
+        self.assertEqual(msg.kind, expected.kind, "デシリアライズ結果のkindがおかしい")
+        self.assertEqual(msg.sender, expected.sender, "デシリアライズ結果のsenderがおかしい")
+        self.assertEqual(msg.params, expected.params, "デシリアライズ結果のparamsがおかしい")
 
 
 
