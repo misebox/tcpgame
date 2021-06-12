@@ -24,7 +24,7 @@ def recv_message(soc):
     body_size = recv_body_size(soc)
     body = recv_bytes(soc, body_size)
     msg = AppMessage.restore_message(body)
-    print('received message: ', msg.to_json())
+    print('Received:', msg)
     return msg
 
 
@@ -52,5 +52,5 @@ def send_bytes(soc, body):
 
 
 def send_message(soc, msg: AppMessage):
-    print('sent message;', msg.to_json())
+    print('Sent:', msg)
     send_bytes(soc, msg.to_bytes())

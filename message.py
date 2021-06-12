@@ -91,6 +91,9 @@ class AppMessage:
         msg = json.loads(message_bytes, object_hook=decodeAppMessage)
         return msg
     
+    def __str__(self):
+        timestamp = self.timestamp.strftime('%Y-%m-%d %H:%M:%S') if self.timestamp else self.timestamp
+        return f'MSG({timestamp} {self.sender} {self.kind} {self.params})'
 
 class AppJSONEncoder(json.JSONEncoder):
     def default(self, o):

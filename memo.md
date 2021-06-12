@@ -44,6 +44,7 @@ cli
 - list_game
 - res_list_game
 - join_game
+- ready_game
 - start_game
 - action
 - result
@@ -68,4 +69,15 @@ srv:start_game: [Game, OK]
 
 メッセージクラスを作った。
 
+
+
+次回
+create_game
+ready_game
+timeout
+input
+
+
+2021.6.12
+メッセージのフローが必要？
 

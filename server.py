@@ -18,18 +18,19 @@ try:
 
     clients = {}
     while True:
-        client_socket, address = server_soc.accept()
-        print(f"Connection from {address} has been established!")
+        client_socket, address_port = server_soc.accept()
+        print(f"Connection from {address_port} has been established!")
 
         # Welcome
         body = "Welcome to the server!"
-        msg = AppMessage.create_welcome(sender, body, address)
+        msg = AppMessage.create_welcome(sender, body, address_port)
         common.send_message(client_socket, msg)
 
         # recv REGISTER
         msg = common.recv_message(client_socket)
         assert msg.kind == MessageKind.REGISTER
         user_name = msg.params['name']
+        address, port = address_port
         clients[address] = clients.get(address) or {}
         client = clients[address]
         client['name'] = user_name
