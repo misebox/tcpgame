@@ -3,9 +3,24 @@ import yaml
 import common
 
 from message import AppMessage, MessageKind
+import conversation
 
 with open('config.yml') as f:
     config = yaml.safe_load(f)
+
+
+class SocketWrapper:
+    def __init__(self, sender, client_socket, address_port):
+        self.sender = sender
+        self.server_address, self.server_port = sender
+        self.client_socket = client_socket
+        self.client_address, self.client_port = address_port
+
+    def send_message(self, msg):
+        common.send_message(self.client_socket, msg)
+
+    def recv_message(self):
+        return common.recv_message(self.client_socket)
 
 try:
     server_soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,30 +31,22 @@ try:
 
     server_soc.listen(5)
 
-    clients = {}
     while True:
         client_socket, address_port = server_soc.accept()
         print(f"Connection from {address_port} has been established!")
 
+        socw = SocketWrapper(sender, client_socket, address_port)
         # Welcome
         body = "Welcome to the server!"
         msg = AppMessage.create_welcome(sender, body, address_port)
-        common.send_message(client_socket, msg)
+        socw.send_message(msg)
 
-        # recv REGISTER
-        msg = common.recv_message(client_socket)
-        assert msg.kind == MessageKind.REGISTER
-        user_name = msg.params['name']
-        address, port = address_port
-        clients[address] = clients.get(address) or {}
-        client = clients[address]
-        client['name'] = user_name
-        for addr, d in clients.items():
-            print(addr, d)
-
-        # send OK
-        msg = AppMessage.create_ok(sender)
-        common.send_message(client_socket, msg)
+        # recv FIRST MESSAGE
+        msg = socw.recv_message()
+        if msg.kind == MessageKind.REGISTER:
+            conversation.process_register(socw, msg)
+        elif msg.kind == MessageKind.CREATE_GAME:
+            conversation.process_create_game(socw, msg)
 
         client_socket.close()
 

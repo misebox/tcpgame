@@ -28,7 +28,7 @@ class AppMessage:
         self.timestamp = None
 
     @classmethod
-    def create_message(cls, sender, kind, params=None):
+    def create_message(cls, kind, sender=None, params=None):
         msg = AppMessage()
         msg.sender = sender
         msg.kind = kind
@@ -37,8 +37,8 @@ class AppMessage:
         return msg
 
     @classmethod
-    def create_ok(cls, sender):
-        return cls.create_message(sender, MessageKind.OK)
+    def create_ok(cls):
+        return cls.create_message(MessageKind.OK)
 
     @classmethod
     def create_welcome(cls, sender, body, client_address):
@@ -46,20 +46,20 @@ class AppMessage:
             body=body,
             client_address=client_address
         )
-        return cls.create_message(sender, MessageKind.WELCOME, params)
+        return cls.create_message(MessageKind.WELCOME, sender, params)
 
     @classmethod
     def create_register(cls, sender, name):
         params = dict(
             name=name,
         )
-        return cls.create_message(sender, MessageKind.REGISTER, params)
+        return cls.create_message(MessageKind.REGISTER, sender, params)
 
     @classmethod
     def from_dict(cls, _dict):
         assert _dict.get('klass') == 'Message'
         kind = MessageKind[_dict['kind']]
-        sender = tuple(_dict['sender'])
+        sender = tuple(_dict['sender']) if _dict['sender'] else None
         params = _dict['params']
         timestamp = datetime.fromisoformat(_dict['timestamp'])
         msg = cls()
