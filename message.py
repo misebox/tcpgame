@@ -15,6 +15,7 @@ class MessageKind(enum.Enum):
     ACTION      = enum.auto()
     RESULT      = enum.auto()
     SCORE       = enum.auto()
+    CLOSE       = enum.auto()
 
 # タイムゾーンの生成
 JST = timezone(timedelta(hours=+9), 'JST')
@@ -28,7 +29,7 @@ class AppMessage:
         self.timestamp = None
 
     @classmethod
-    def create_message(cls, kind, sender=None, params=None):
+    def create_message(cls, kind, params=None, sender=None):
         msg = AppMessage()
         msg.sender = sender
         msg.kind = kind
@@ -41,19 +42,30 @@ class AppMessage:
         return cls.create_message(MessageKind.OK)
 
     @classmethod
-    def create_welcome(cls, sender, body, client_address):
+    def create_welcome(cls, body, client_address):
         params = dict(
             body=body,
             client_address=client_address
         )
-        return cls.create_message(MessageKind.WELCOME, sender, params)
+        return cls.create_message(MessageKind.WELCOME, params)
 
     @classmethod
-    def create_register(cls, sender, name):
+    def create_register(cls, name):
         params = dict(
             name=name,
         )
-        return cls.create_message(MessageKind.REGISTER, sender, params)
+        return cls.create_message(MessageKind.REGISTER, params)
+
+    @classmethod
+    def create_create_game(cls, name):
+        params = dict(
+            name=name,
+        )
+        return cls.create_message(MessageKind.CREATE_GAME, params)
+
+    @classmethod
+    def create_close(cls):
+        return cls.create_message(MessageKind.CLOSE)
 
     @classmethod
     def from_dict(cls, _dict):

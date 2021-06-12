@@ -32,21 +32,28 @@ try:
     server_soc.listen(5)
 
     while True:
+        # TODO: 複数の接続を処理する
         client_socket, address_port = server_soc.accept()
         print(f"Connection from {address_port} has been established!")
 
         socw = SocketWrapper(sender, client_socket, address_port)
         # Welcome
         body = "Welcome to the server!"
-        msg = AppMessage.create_welcome(sender, body, address_port)
+        msg = AppMessage.create_welcome(body, address_port)
         socw.send_message(msg)
 
-        # recv FIRST MESSAGE
-        msg = socw.recv_message()
-        if msg.kind == MessageKind.REGISTER:
-            conversation.process_register(socw, msg)
-        elif msg.kind == MessageKind.CREATE_GAME:
-            conversation.process_create_game(socw, msg)
+        while True:
+            # recv FIRST MESSAGE
+            msg = socw.recv_message()
+            if msg.kind == MessageKind.REGISTER:
+                conversation.process_register(socw, msg)
+            elif msg.kind == MessageKind.CREATE_GAME:
+                conversation.process_create_game(socw, msg)
+            elif msg.kind == MessageKind.CLOSE:
+                conversation.process_close(socw, msg)
+                break
+            else:
+                break
 
         client_socket.close()
 

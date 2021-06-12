@@ -21,11 +21,26 @@ def main():
 
     my_addr = msg.params['client_address']
     print(my_addr)
-    msg = AppMessage.create_register(my_addr, user_name)
-    common.send_message(soc, msg)
 
-    # expect ok
+    # register
+    msg = AppMessage.create_register(user_name)
+    common.send_message(soc, msg)
     msg = common.recv_message(soc)
+
+    while True:
+        cmd = input('input command:').strip().split(' ')
+        if cmd[0] == 'game':
+            if cmd[1] == 'create':
+                gamename = cmd[2]
+                msg = AppMessage.create_create_game(gamename)
+                common.send_message(soc, msg)
+            elif cmd[1] == 'list':
+                print('game list')
+        elif cmd[0] == 'close':
+            msg = AppMessage.create_close()
+            common.send_message(soc, msg)
+            msg = common.recv_message(soc)
+            break
 
     soc.close()
 
