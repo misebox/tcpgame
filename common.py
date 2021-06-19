@@ -7,13 +7,15 @@ HEADER_SIZE = 4
 def recv_bytes(soc: socket.socket, req_size):
     buf = bytearray()
     cnt = 0
-    received = 0
+    total_bytes_count = 0
     while len(buf) < req_size:
-        received = soc.recv(req_size - received)
-        if len(received) == 0 and cnt >= 10:
-            raise Exception('received 0 for 10 times')
+        received = soc.recv(req_size - total_bytes_count)
+        if len(received) == 0:
+            cnt += 1
+            if cnt >= 10:
+                raise Exception('received 0 for 10 times')
         buf.extend(received)
-        cnt += 1
+        total_bytes_count += len(received)
     return buf
 
 def recv_body_size(soc: socket.socket):

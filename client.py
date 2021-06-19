@@ -2,7 +2,7 @@ import socket
 import yaml
 
 import common
-from message import AppMessage
+from message import AppMessageFactory
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     print(my_addr)
 
     # register
-    msg = AppMessage.create_register(user_name)
+    msg = AppMessageFactory.register(user_name)
     common.send_message(soc, msg)
     msg = common.recv_message(soc)
 
@@ -32,12 +32,24 @@ def main():
         if cmd[0] == 'game':
             if cmd[1] == 'create':
                 gamename = cmd[2]
-                msg = AppMessage.create_create_game(gamename)
+                msg = AppMessageFactory.create_game(gamename)
                 common.send_message(soc, msg)
+                msg = common.recv_message(soc)
             elif cmd[1] == 'list':
-                print('game list')
+                msg = AppMessageFactory.get_game_list()
+                common.send_message(soc, msg)
+                msg = common.recv_message(soc)                
+                for g in msg.params['games']:
+                    print(g)
+            elif cmd[1] == 'join':
+                game_name = cmd[2]
+                msg = AppMessageFactory.join_game(game_name)
+                common.send_message(soc, msg)
+                msg = common.recv_message(soc)
+                print(msg)
+
         elif cmd[0] == 'close':
-            msg = AppMessage.create_close()
+            msg = AppMessageFactory.close()
             common.send_message(soc, msg)
             msg = common.recv_message(soc)
             break

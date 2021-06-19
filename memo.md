@@ -79,5 +79,11 @@ input
 
 
 2021.6.12
-メッセージのフローが必要？
+メッセージのフローっぽいものを作った。
+# create_game
+ready_game
+
+2021.6.19
+asyncio などのお勉強
+ThreadingTcpServer を使うように修正
 
